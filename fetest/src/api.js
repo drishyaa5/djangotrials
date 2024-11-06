@@ -6,13 +6,3 @@ export const fetchTodos = async () => {
   const response = await axios.get(API_URL);
   return response.data;
 };
-
-export const addTodo = async (todo) => {
-  const response = await axios.post(`add/`);
-  return response.data;
-};
-
-export const deleteTodo = async (id) => {
-  const response = await axios.delete(`${API_URL}delete/`, { data: { id } });
-  return response.data;
-};
