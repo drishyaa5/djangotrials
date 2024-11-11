@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .models import todos
 from django.http import HttpResponse, JsonResponse
 from django.middleware.csrf import get_token
+import json
 
 
 
@@ -18,15 +19,28 @@ def show_todo(request):
     return JsonResponse(todo_list, safe=False)
 
 def add_todo(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        record = {
-            "title": data.get("title"),
-            "description": data.get("description"),
-            "checked": False
-        }
-        todos.insert_one(record)
-        return HttpResponse("New todo added")
+    if request.method == "POST":
+        try:
+            # Parse the JSON data from the request body
+            data = json.loads(request.body)
+            title = data.get("title")
+            description = data.get("description")
+            checked = data.get("checked", False)
+
+            # Create a new Todo item
+            todo = todos.objects.create(
+                title=title,
+                description=description,
+                checked=checked
+            )
+            return JsonResponse({"message": "New todo added", "id": todo.id}, status=201)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    
+    return JsonResponse({"error": "Invalid request method"}, status=400)
+    
+
+
 
 def delete_todo(request):
     filtered = {"title": "wash dishes"}
