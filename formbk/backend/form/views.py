@@ -45,10 +45,8 @@ class AddTODO(APIView):
         return Response({"message": "Data saved successfully!"}, status=status.HTTP_201_CREATED)
 
 
-
-
 class TaskList(APIView):
     def get(self, request, *args, **kwargs):
-        # Reuse the existing client and collection
+        # Fetch tasks from the collection (exclude the _id field)
         tasks = list(collection.find({}, {"_id": 0, "task": 1}))
         return Response(tasks, status=status.HTTP_200_OK)
